@@ -1,4 +1,5 @@
 # aison
+[![Tests](https://github.com/AelisonX/aison/actions/workflows/tests.yml/badge.svg)](https://github.com/AelisonX/aison/actions/workflows/tests.yml)
 A small framework for decisions that remember disagreement.
 # AISØN
 
