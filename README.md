@@ -50,6 +50,8 @@ Consensus: NOT ESTABLISHED
 Human decision required: YES
 ```
 
+See the full [v0.1 demo output](examples/demo_output.md).
+
 ## Epistemic labels
 
 AISØN distinguishes between:
