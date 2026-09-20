@@ -11,5 +11,6 @@ class Decision:
     dissent: List[str] = field(default_factory=list)
     unknown: List[str] = field(default_factory=list)
     provenance_gaps: List[str] = field(default_factory=list)
+    what_was_lost: List[str] = field(default_factory=list)
 
     human_decision_required: bool = True
