@@ -27,6 +27,20 @@ A missing response must not be silently converted into agreement.
 
 If an expected agent response is missing, truncated, or incomplete, AISØN should preserve that uncertainty explicitly.
 
+## What was lost
+
+A finished-looking answer is not allowed to hide what was dropped.
+
+Synthesis records losses such as:
+
+- `DISSENT:<agent>`
+- `UNKNOWN:<agent>`
+- `PROVENANCE_GAP:<agent>`
+
+If the decision is unresolved, `what_was_lost` must not be empty.
+
+If every packet is a clean `ACCEPT` and nothing is missing, `what_was_lost` is empty.
+
 ## Example
 
 Expected council:
@@ -48,63 +62,3 @@ PACKET_INTEGRITY_WARNING
 
 Consensus: NOT ESTABLISHED
 Human decision required: YES
-```
-
-See the full [v0.1 demo output](examples/demo_output.md).
-
-## Epistemic labels
-
-AISØN distinguishes between:
-
-- FACT
-- INTERPRETATION
-- SPECULATION
-- MODEL_SELF_REPORT
-- FICTION
-- JOKE
-
-These labels describe the status of a claim.
-
-They do not determine its truth automatically.
-
-## Human authority
-
-Models may:
-
-- analyze
-- challenge
-- propose
-- synthesize
-- audit
-
-Models may not silently convert:
-
-- suggestion into command
-- consensus into truth
-- missing evidence into agreement
-
-Final authority remains human.
-
-## Tests
-
-AISØN currently protects four core invariants with automated tests:
-
-- **Missing is not consent.**
-- **UNKNOWN is not ACCEPT.**
-- **DISSENT survives synthesis.**
-- **Human final authority remains required.**
-
-Tests run automatically on every push through GitHub Actions.
-
-## Status
-
-AISØN is currently in **v0.1 prototype development**.
-
-The first implementation uses simple local Python structures and mocked agent outputs.
-
-No API keys required.
-
----
-
-**A good system does not only remember what it decided.  
-It remembers what it could not resolve.**
