@@ -16,12 +16,15 @@ def synthesize(packets: List[Packet], decision_id: str) -> Decision:
 
         elif packet.status == "DISSENT":
             decision.dissent.append(packet.agent_id)
+            decision.what_was_lost.append(f"DISSENT:{packet.agent_id}")
 
         elif packet.status == "UNKNOWN":
             decision.unknown.append(packet.agent_id)
+            decision.what_was_lost.append(f"UNKNOWN:{packet.agent_id}")
 
         if packet.integrity_warning:
             decision.provenance_gaps.append(packet.agent_id)
+            decision.what_was_lost.append(f"PROVENANCE_GAP:{packet.agent_id}")
 
     if decision.dissent or decision.unknown or decision.provenance_gaps:
         decision.status = "UNRESOLVED"
