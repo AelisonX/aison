@@ -38,23 +38,10 @@ Unknown:
 Provenance gaps:
 - SYNTHESIZER
 
+What was lost:
+- DISSENT:RED_TEAM
+- UNKNOWN:SYNTHESIZER
+- PROVENANCE_GAP:SYNTHESIZER
+
 Human decision required:
 YES
-```
-
-## Interpretation
-
-AISØN does not convert missing context into agreement.
-
-It preserves:
-
-- dissent
-- unknown states
-- provenance gaps
-- human final authority
-
-The system may still synthesize an incomplete council.
-
-It may not call that completeness consensus.
-
-> Missing is not consent.
