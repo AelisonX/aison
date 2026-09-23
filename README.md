@@ -19,6 +19,14 @@ AISØN is an experimental framework for preserving:
 - reversible decisions
 - human final authority
 
+## Evidence-tagged review
+
+AISØN can preserve the evidence status behind model-reviewed claims.
+
+> Evidence should keep its provenance even when models agree.
+
+See [`docs/evidence-tagged-review.md`](docs/evidence-tagged-review.md) for the current review pattern.
+
 ## Core principle
 
 **Missing is not consent.**
@@ -62,3 +70,4 @@ PACKET_INTEGRITY_WARNING
 
 Consensus: NOT ESTABLISHED
 Human decision required: YES
+```
