@@ -1,4 +1,8 @@
-from aison.recovery import RecoveryStep, StepStatus
+from aison.recovery import (
+    RecoveryStep,
+    StepStatus,
+    format_recovery_steps,
+)
 
 
 def test_recovery_step_can_store_status_and_manual_instruction():
@@ -20,3 +24,28 @@ def test_recovery_step_manual_instruction_is_optional():
     )
 
     assert step.manual_instruction is None
+
+
+def test_format_recovery_steps_shows_human_readable_progress():
+    steps = [
+        RecoveryStep(
+            name="Open repository",
+            status=StepStatus.COMPLETED,
+        ),
+        RecoveryStep(
+            name="Commit change",
+            status=StepStatus.IN_PROGRESS,
+        ),
+        RecoveryStep(
+            name="Verify result",
+            status=StepStatus.PENDING,
+        ),
+    ]
+
+    result = format_recovery_steps(steps)
+
+    assert result == (
+        "✓ Open repository\n"
+        "→ Commit change\n"
+        "○ Verify result"
+    )
