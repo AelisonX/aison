@@ -1,6 +1,7 @@
 from aison.recovery import (
     RecoveryStep,
     StepStatus,
+    can_start_again,
     can_take_over,
     format_recovery_steps,
     show_manual_instruction,
@@ -92,3 +93,35 @@ def test_can_take_over_returns_false_for_unsafe_checkpoint():
     )
 
     assert can_take_over(step) is False
+
+
+def test_can_start_again_returns_true_for_replayable_checkpoint():
+    step = RecoveryStep(
+        name="Review change",
+        status=StepStatus.COMPLETED,
+        replayable_checkpoint=True,
+    )
+
+    assert can_start_again(step) is True
+
+
+def test_can_start_again_returns_false_for_non_replayable_checkpoint():
+    step = RecoveryStep(
+        name="Payment submitted",
+        status=StepStatus.COMPLETED,
+        replayable_checkpoint=False,
+    )
+
+    assert can_start_again(step) is False
+
+
+def test_takeover_and_replayability_are_independent():
+    step = RecoveryStep(
+        name="Review change",
+        status=StepStatus.COMPLETED,
+        safe_checkpoint=False,
+        replayable_checkpoint=True,
+    )
+
+    assert can_take_over(step) is False
+    assert can_start_again(step) is True
