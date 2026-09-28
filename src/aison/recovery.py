@@ -17,7 +17,13 @@ class RecoveryStep:
     replayable_checkpoint: bool = False
 
 
-def format_recovery_steps(steps: list[RecoveryStep]) -> str:
+@dataclass(frozen=True)
+class RecoverySession:
+    capability: str
+    steps: tuple[RecoveryStep, ...]
+
+
+def format_recovery_steps(steps: list[RecoveryStep] | tuple[RecoveryStep, ...]) -> str:
     symbols = {
         StepStatus.COMPLETED: "✓",
         StepStatus.IN_PROGRESS: "→",
@@ -40,3 +46,11 @@ def can_take_over(step: RecoveryStep) -> bool:
 
 def can_start_again(step: RecoveryStep) -> bool:
     return step.replayable_checkpoint
+
+
+def current_step(session: RecoverySession) -> RecoveryStep | None:
+    for step in session.steps:
+        if step.status == StepStatus.IN_PROGRESS:
+            return step
+
+    return None
