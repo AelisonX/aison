@@ -1,8 +1,10 @@
 from aison.recovery import (
+    RecoverySession,
     RecoveryStep,
     StepStatus,
     can_start_again,
     can_take_over,
+    current_step,
     format_recovery_steps,
     show_manual_instruction,
 )
@@ -125,3 +127,46 @@ def test_takeover_and_replayability_are_independent():
 
     assert can_take_over(step) is False
     assert can_start_again(step) is True
+
+
+def test_current_step_returns_in_progress_step():
+    session = RecoverySession(
+        capability="github_publish_aison",
+        steps=(
+            RecoveryStep(
+                name="Open repository",
+                status=StepStatus.COMPLETED,
+            ),
+            RecoveryStep(
+                name="Commit change",
+                status=StepStatus.IN_PROGRESS,
+            ),
+            RecoveryStep(
+                name="Verify result",
+                status=StepStatus.PENDING,
+            ),
+        ),
+    )
+
+    step = current_step(session)
+
+    assert step is not None
+    assert step.name == "Commit change"
+
+
+def test_current_step_returns_none_when_nothing_is_in_progress():
+    session = RecoverySession(
+        capability="github_publish_aison",
+        steps=(
+            RecoveryStep(
+                name="Open repository",
+                status=StepStatus.COMPLETED,
+            ),
+            RecoveryStep(
+                name="Verify result",
+                status=StepStatus.PENDING,
+            ),
+        ),
+    )
+
+    assert current_step(session) is None
