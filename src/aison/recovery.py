@@ -26,3 +26,7 @@ def format_recovery_steps(steps: list[RecoveryStep]) -> str:
         f"{symbols[step.status]} {step.name}"
         for step in steps
     )
+
+
+def show_manual_instruction(step: RecoveryStep) -> str | None:
+    return step.manual_instruction
