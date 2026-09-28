@@ -13,3 +13,16 @@ class RecoveryStep:
     name: str
     status: StepStatus
     manual_instruction: str | None = None
+
+
+def format_recovery_steps(steps: list[RecoveryStep]) -> str:
+    symbols = {
+        StepStatus.COMPLETED: "✓",
+        StepStatus.IN_PROGRESS: "→",
+        StepStatus.PENDING: "○",
+    }
+
+    return "\n".join(
+        f"{symbols[step.status]} {step.name}"
+        for step in steps
+    )
