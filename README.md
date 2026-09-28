@@ -27,6 +27,24 @@ AISØN can preserve the evidence status behind model-reviewed claims.
 
 See [`docs/evidence-tagged-review.md`](docs/evidence-tagged-review.md) for the current review pattern.
 
+## Recovery Companion
+
+Automation can become faster than human attention.
+
+AISØN is exploring whether automated workflows can remain convenient while keeping human recovery visible and reachable.
+
+Current design questions include:
+
+- Can the human see what the automation did?
+- Can the human learn the manual path on demand?
+- Can the human take over from a checkpoint?
+- Can the human restart from an earlier safe point?
+- Can persistent delegation preserve a usable recovery path?
+
+> Automation should never make the manual path invisible.
+
+See [`docs/recovery-companion.md`](docs/recovery-companion.md) for the current experimental concept.
+
 ## Core principle
 
 **Missing is not consent.**
