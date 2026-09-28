@@ -1,26 +1,40 @@
 # Recovery Companion Prototype
 
-**Status:** EXPERIMENTAL / CORE PRIMITIVES IMPLEMENTED / INTERFACE NOT IMPLEMENTED
+**Status:** EXPERIMENTAL / SESSION-LEVEL PRIMITIVES IMPLEMENTED / LIVE INTERFACE NOT IMPLEMENTED
 
 ## Goal
 
-Turn the Recovery Companion concept into a small testable interface for one workflow:
+Turn the Recovery Companion concept into a small testable recovery layer for one workflow:
 
 `GitHub publishing for the aison repository`
 
-The prototype should preserve four human recovery capabilities.
+The prototype explores four human recovery capabilities:
+
+1. See what happened.
+2. Show me how.
+3. Take over from here.
+4. Start again from here.
+
+The goal is not to make the human faster than automation.
+
+The goal is to preserve a usable recovery path when automation is faster than the human.
+
+> Automation should never make the manual path invisible.
+
+> Human control should not depend on reacting faster than AI.
+
+---
 
 ## 1. See What Happened
 
-The human can see the major steps of the automated workflow.
+The human can see the major steps of an automated workflow.
 
 Example:
 
 ```text
 ✓ Open repository
 ✓ Edit file
-✓ Commit changes
-→ Push
+→ Commit changes
 ○ Verify result
 ```
 
@@ -38,21 +52,29 @@ Design example:
 
 Implementation:
 
-`src/aison/recovery.py` can represent workflow step status and format steps into a human-readable progress view.
+`RecoveryStep` represents individual workflow steps.
 
-Status: `PRIMITIVE_IMPLEMENTED / INTERFACE_NOT_IMPLEMENTED`
+`RecoverySession` groups those steps into one recovery-aware workflow session.
+
+`format_recovery_steps()` provides a human-readable progress view.
+
+`current_step()` identifies the active step when one exists.
+
+Status:
+
+`SESSION_PRIMITIVE_IMPLEMENTED / LIVE_INTERFACE_NOT_IMPLEMENTED`
 
 ---
 
 ## 2. Show Me How
 
-The human can request simple manual instructions for any major step.
+The human can request simple manual instructions for a major workflow step.
 
 The explanation should be available on demand and should not interrupt normal automation.
 
 ### Success condition
 
-For each major step, the system can show a human-readable manual path.
+For each major step, the system can expose a human-readable manual path when one has been defined.
 
 Design example:
 
@@ -60,23 +82,31 @@ Design example:
 
 Implementation:
 
-`RecoveryStep` can store an optional manual instruction, and the recovery module can retrieve it on demand.
+`RecoveryStep` can store an optional manual instruction.
 
-Status: `PRIMITIVE_IMPLEMENTED / INTERFACE_NOT_IMPLEMENTED`
+`show_manual_instruction()` retrieves that instruction without inventing one when none exists.
+
+Status:
+
+`PRIMITIVE_IMPLEMENTED / LIVE_INTERFACE_NOT_IMPLEMENTED`
 
 ---
 
 ## 3. Take Over From Here
 
-The human can stop automation at a safe checkpoint and continue manually.
+The human can continue manually from a safe checkpoint.
+
+Takeover safety is explicit.
+
+It is not inferred merely because a step exists.
 
 ### Success condition
 
-A checkpoint clearly identifies:
+A recovery session can identify the most recent checkpoint that:
 
-- the current state,
-- what has already changed,
-- and the next manual action.
+- has already been reached,
+- is explicitly marked safe for takeover,
+- and is not merely a future pending step.
 
 Design example:
 
@@ -84,9 +114,15 @@ Design example:
 
 Implementation:
 
-`RecoveryStep` can mark a step as a safe takeover checkpoint, and the recovery module can determine whether takeover is allowed.
+`RecoveryStep.safe_checkpoint` records whether a step is safe for takeover.
 
-Status: `PRIMITIVE_IMPLEMENTED / INTERFACE_NOT_IMPLEMENTED`
+`can_take_over()` evaluates an individual step.
+
+`latest_takeover_checkpoint()` searches the session for the most recent reached safe checkpoint.
+
+Status:
+
+`SESSION_PRIMITIVE_IMPLEMENTED / REAL_PAUSE_CONTROL_NOT_IMPLEMENTED`
 
 ---
 
@@ -94,11 +130,21 @@ Status: `PRIMITIVE_IMPLEMENTED / INTERFACE_NOT_IMPLEMENTED`
 
 Human control should not depend on reacting faster than AI.
 
-If automation has already finished or moved too quickly, the human should be able to return to a safe checkpoint and replay the workflow from there.
+If automation has already completed or moved beyond the point where live takeover is possible, the human may need a separate recovery path:
+
+return to a known checkpoint and safely replay from there.
+
+Restart is intentionally different from rollback.
+
+A restart should preserve the original history rather than pretending the earlier execution never happened.
 
 ### Success condition
 
-A previous checkpoint can be selected without silently losing the original history.
+A recovery session can identify the most recent checkpoint that:
+
+- has already been reached,
+- is explicitly marked replayable,
+- and is not merely a future pending step.
 
 Design example:
 
@@ -106,11 +152,52 @@ Design example:
 
 Implementation:
 
-`RecoveryStep` can independently mark a checkpoint as replayable, and the recovery module can determine whether restart is allowed.
+`RecoveryStep.replayable_checkpoint` records whether a step may be used as a restart point.
 
-Replayability is intentionally separate from live takeover safety.
+`can_start_again()` evaluates an individual step.
 
-Status: `PRIMITIVE_IMPLEMENTED / INTERFACE_NOT_IMPLEMENTED`
+`latest_restart_checkpoint()` searches the session for the most recent reached replayable checkpoint.
+
+Replayability and live takeover safety are intentionally independent.
+
+A checkpoint may be:
+
+- safe for takeover but not replayable,
+- replayable but not safe for live takeover,
+- both,
+- or neither.
+
+Status:
+
+`SESSION_PRIMITIVE_IMPLEMENTED / REAL_REPLAY_ENGINE_NOT_IMPLEMENTED`
+
+---
+
+## Recovery Session Model
+
+The current implementation introduces:
+
+```text
+RecoverySession
+    capability
+    steps
+```
+
+A session groups recovery information around one automated capability.
+
+For the current prototype:
+
+```text
+capability = github_publish_aison
+```
+
+This allows recovery logic to reason about the workflow as a sequence rather than treating every step as an isolated object.
+
+Current session-level operations include:
+
+- find the active step,
+- find the latest reached safe takeover checkpoint,
+- find the latest reached replayable checkpoint.
 
 ---
 
@@ -121,11 +208,13 @@ Manual recovery already has two experimental artifacts:
 - [`docs/runbooks/github-publish.md`](runbooks/github-publish.md)
 - [`docs/recovery/github-publish-state.md`](recovery/github-publish-state.md)
 
-These document the current manual fallback.
+These document the current manual fallback and recovery state.
+
+---
 
 ## Current Code
 
-The first implementation lives in:
+The implementation lives in:
 
 `src/aison/recovery.py`
 
@@ -135,7 +224,12 @@ Current tested primitives include:
 - human-readable progress formatting,
 - optional manual instructions,
 - safe takeover checkpoints,
-- replayable checkpoints.
+- replayable checkpoints,
+- recovery session grouping,
+- active-step lookup,
+- latest reached takeover checkpoint lookup,
+- latest reached restart checkpoint lookup,
+- independence between takeover and restart semantics.
 
 Tests live in:
 
@@ -143,18 +237,48 @@ Tests live in:
 
 The repository test workflow currently passes with these primitives.
 
+---
+
 ## What Is Still Missing
 
 The current code does **not** yet provide:
 
-- a live Recovery Companion interface,
+- a live Recovery Companion user interface,
 - an automated GitHub agent,
 - real pause or takeover control,
 - real checkpoint restoration,
-- safe replay of external actions,
-- persistent workflow history.
+- safe replay of external side effects,
+- persistent recovery history,
+- external-system state verification,
+- crash recovery,
+- multi-agent recovery coordination.
 
-The current implementation is only the smallest code layer needed to explore those behaviours.
+Those are later implementation problems.
+
+The current prototype is deliberately smaller.
+
+It establishes the recovery semantics before building machinery around them.
+
+---
+
+## Current Prototype Result
+
+The prototype now demonstrates a minimal recovery model in which automation can expose:
+
+```text
+What happened?
+How would I do this manually?
+Where can I safely take over?
+Where can I safely start again?
+```
+
+The current implementation does not prove that Recovery Companion works in real-world agent systems.
+
+It does show that these four recovery questions can be represented separately rather than collapsed into a single generic "undo" or "human override" control.
+
+That distinction is the main result of this prototype phase.
+
+---
 
 ## Prototype Rule
 
@@ -164,4 +288,8 @@ Do not generalise the design until the GitHub publishing prototype exposes what 
 
 Examples are not validation.
 
-Passing tests show that the current code behaves as specified; they do not prove that the overall Recovery Companion concept works in real use.
+Passing tests show that the current code behaves as specified.
+
+They do not prove that the overall Recovery Companion concept works in real use.
+
+**Status remains experimental.**
