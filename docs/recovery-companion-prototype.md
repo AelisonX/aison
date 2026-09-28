@@ -1,6 +1,6 @@
 # Recovery Companion Prototype
 
-**Status:** EXPERIMENTAL / NOT IMPLEMENTED
+**Status:** EXPERIMENTAL / EXAMPLES COMPLETE / NOT IMPLEMENTED
 
 ## Goal
 
@@ -32,7 +32,11 @@ A human can identify:
 - what is happening now,
 - and what remains.
 
-Status: `TODO`
+Example:
+
+[`examples/recovery-companion-github-session.md`](../examples/recovery-companion-github-session.md)
+
+Status: `EXAMPLE_COMPLETE / NOT_IMPLEMENTED`
 
 ---
 
@@ -46,7 +50,11 @@ The explanation should be available on demand and should not interrupt normal au
 
 For each major step, the system can show a human-readable manual path.
 
-Status: `TODO`
+Example:
+
+[`examples/recovery-companion-show-me-how.md`](../examples/recovery-companion-show-me-how.md)
+
+Status: `EXAMPLE_COMPLETE / NOT_IMPLEMENTED`
 
 ---
 
@@ -62,7 +70,11 @@ A checkpoint clearly identifies:
 - what has already changed,
 - and the next manual action.
 
-Status: `TODO`
+Example:
+
+[`examples/recovery-companion-take-over.md`](../examples/recovery-companion-take-over.md)
+
+Status: `EXAMPLE_COMPLETE / NOT_IMPLEMENTED`
 
 ---
 
@@ -76,7 +88,11 @@ If automation has already finished or moved too quickly, the human should be abl
 
 A previous checkpoint can be selected without silently losing the original history.
 
-Status: `TODO`
+Example:
+
+[`examples/recovery-companion-start-again.md`](../examples/recovery-companion-start-again.md)
+
+Status: `EXAMPLE_COMPLETE / NOT_IMPLEMENTED`
 
 ---
 
@@ -90,6 +106,19 @@ Manual recovery already has two experimental artifacts:
 These document the current manual fallback.
 
 They do not yet implement the Recovery Companion interface.
+
+## Current Prototype State
+
+The four intended behaviours are now concrete enough to inspect:
+
+- See what happened
+- Show me how
+- Take over from here
+- Start again from here
+
+The next phase is implementation.
+
+The examples should not be treated as evidence that the interface works.
 
 ## Prototype Rule
 
