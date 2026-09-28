@@ -2,6 +2,7 @@ from aison.recovery import (
     RecoveryStep,
     StepStatus,
     format_recovery_steps,
+    show_manual_instruction,
 )
 
 
@@ -49,3 +50,24 @@ def test_format_recovery_steps_shows_human_readable_progress():
         "→ Commit change\n"
         "○ Verify result"
     )
+
+
+def test_show_manual_instruction_returns_instruction():
+    step = RecoveryStep(
+        name="Commit change",
+        status=StepStatus.IN_PROGRESS,
+        manual_instruction="Select Commit changes and confirm the commit.",
+    )
+
+    assert show_manual_instruction(step) == (
+        "Select Commit changes and confirm the commit."
+    )
+
+
+def test_show_manual_instruction_returns_none_when_missing():
+    step = RecoveryStep(
+        name="Verify result",
+        status=StepStatus.PENDING,
+    )
+
+    assert show_manual_instruction(step) is None
