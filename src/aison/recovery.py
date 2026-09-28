@@ -69,3 +69,16 @@ def latest_takeover_checkpoint(
             return step
 
     return None
+
+
+def latest_restart_checkpoint(
+    session: RecoverySession,
+) -> RecoveryStep | None:
+    for step in reversed(session.steps):
+        if (
+            step.replayable_checkpoint
+            and step.status != StepStatus.PENDING
+        ):
+            return step
+
+    return None
