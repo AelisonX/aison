@@ -14,6 +14,7 @@ class RecoveryStep:
     status: StepStatus
     manual_instruction: str | None = None
     safe_checkpoint: bool = False
+    replayable_checkpoint: bool = False
 
 
 def format_recovery_steps(steps: list[RecoveryStep]) -> str:
@@ -35,3 +36,7 @@ def show_manual_instruction(step: RecoveryStep) -> str | None:
 
 def can_take_over(step: RecoveryStep) -> bool:
     return step.safe_checkpoint
+
+
+def can_start_again(step: RecoveryStep) -> bool:
+    return step.replayable_checkpoint
