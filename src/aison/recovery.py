@@ -23,7 +23,9 @@ class RecoverySession:
     steps: tuple[RecoveryStep, ...]
 
 
-def format_recovery_steps(steps: list[RecoveryStep] | tuple[RecoveryStep, ...]) -> str:
+def format_recovery_steps(
+    steps: list[RecoveryStep] | tuple[RecoveryStep, ...]
+) -> str:
     symbols = {
         StepStatus.COMPLETED: "✓",
         StepStatus.IN_PROGRESS: "→",
@@ -51,6 +53,19 @@ def can_start_again(step: RecoveryStep) -> bool:
 def current_step(session: RecoverySession) -> RecoveryStep | None:
     for step in session.steps:
         if step.status == StepStatus.IN_PROGRESS:
+            return step
+
+    return None
+
+
+def latest_takeover_checkpoint(
+    session: RecoverySession,
+) -> RecoveryStep | None:
+    for step in reversed(session.steps):
+        if (
+            step.safe_checkpoint
+            and step.status != StepStatus.PENDING
+        ):
             return step
 
     return None
