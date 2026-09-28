@@ -1,6 +1,7 @@
 from aison.recovery import (
     RecoveryStep,
     StepStatus,
+    can_take_over,
     format_recovery_steps,
     show_manual_instruction,
 )
@@ -71,3 +72,23 @@ def test_show_manual_instruction_returns_none_when_missing():
     )
 
     assert show_manual_instruction(step) is None
+
+
+def test_can_take_over_returns_true_for_safe_checkpoint():
+    step = RecoveryStep(
+        name="Review change",
+        status=StepStatus.IN_PROGRESS,
+        safe_checkpoint=True,
+    )
+
+    assert can_take_over(step) is True
+
+
+def test_can_take_over_returns_false_for_unsafe_checkpoint():
+    step = RecoveryStep(
+        name="External action in progress",
+        status=StepStatus.IN_PROGRESS,
+        safe_checkpoint=False,
+    )
+
+    assert can_take_over(step) is False
