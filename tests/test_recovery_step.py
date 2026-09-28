@@ -6,6 +6,7 @@ from aison.recovery import (
     can_take_over,
     current_step,
     format_recovery_steps,
+    latest_takeover_checkpoint,
     show_manual_instruction,
 )
 
@@ -170,3 +171,56 @@ def test_current_step_returns_none_when_nothing_is_in_progress():
     )
 
     assert current_step(session) is None
+
+
+def test_latest_takeover_checkpoint_returns_most_recent_reached_safe_step():
+    session = RecoverySession(
+        capability="github_publish_aison",
+        steps=(
+            RecoveryStep(
+                name="Open repository",
+                status=StepStatus.COMPLETED,
+                safe_checkpoint=True,
+            ),
+            RecoveryStep(
+                name="Edit file",
+                status=StepStatus.COMPLETED,
+                safe_checkpoint=False,
+            ),
+            RecoveryStep(
+                name="Review change",
+                status=StepStatus.IN_PROGRESS,
+                safe_checkpoint=True,
+            ),
+            RecoveryStep(
+                name="Commit change",
+                status=StepStatus.PENDING,
+                safe_checkpoint=True,
+            ),
+        ),
+    )
+
+    step = latest_takeover_checkpoint(session)
+
+    assert step is not None
+    assert step.name == "Review change"
+
+
+def test_latest_takeover_checkpoint_returns_none_when_no_safe_step_is_reached():
+    session = RecoverySession(
+        capability="github_publish_aison",
+        steps=(
+            RecoveryStep(
+                name="Open repository",
+                status=StepStatus.COMPLETED,
+                safe_checkpoint=False,
+            ),
+            RecoveryStep(
+                name="Commit change",
+                status=StepStatus.PENDING,
+                safe_checkpoint=True,
+            ),
+        ),
+    )
+
+    assert latest_takeover_checkpoint(session) is None
