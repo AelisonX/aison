@@ -1,6 +1,6 @@
 # Recovery Companion Prototype
 
-**Status:** EXPERIMENTAL / EXAMPLES COMPLETE / NOT IMPLEMENTED
+**Status:** EXPERIMENTAL / CORE PRIMITIVES IMPLEMENTED / INTERFACE NOT IMPLEMENTED
 
 ## Goal
 
@@ -32,11 +32,15 @@ A human can identify:
 - what is happening now,
 - and what remains.
 
-Example:
+Design example:
 
 [`examples/recovery-companion-github-session.md`](../examples/recovery-companion-github-session.md)
 
-Status: `EXAMPLE_COMPLETE / NOT_IMPLEMENTED`
+Implementation:
+
+`src/aison/recovery.py` can represent workflow step status and format steps into a human-readable progress view.
+
+Status: `PRIMITIVE_IMPLEMENTED / INTERFACE_NOT_IMPLEMENTED`
 
 ---
 
@@ -50,11 +54,15 @@ The explanation should be available on demand and should not interrupt normal au
 
 For each major step, the system can show a human-readable manual path.
 
-Example:
+Design example:
 
 [`examples/recovery-companion-show-me-how.md`](../examples/recovery-companion-show-me-how.md)
 
-Status: `EXAMPLE_COMPLETE / NOT_IMPLEMENTED`
+Implementation:
+
+`RecoveryStep` can store an optional manual instruction, and the recovery module can retrieve it on demand.
+
+Status: `PRIMITIVE_IMPLEMENTED / INTERFACE_NOT_IMPLEMENTED`
 
 ---
 
@@ -70,11 +78,15 @@ A checkpoint clearly identifies:
 - what has already changed,
 - and the next manual action.
 
-Example:
+Design example:
 
 [`examples/recovery-companion-take-over.md`](../examples/recovery-companion-take-over.md)
 
-Status: `EXAMPLE_COMPLETE / NOT_IMPLEMENTED`
+Implementation:
+
+`RecoveryStep` can mark a step as a safe takeover checkpoint, and the recovery module can determine whether takeover is allowed.
+
+Status: `PRIMITIVE_IMPLEMENTED / INTERFACE_NOT_IMPLEMENTED`
 
 ---
 
@@ -88,11 +100,17 @@ If automation has already finished or moved too quickly, the human should be abl
 
 A previous checkpoint can be selected without silently losing the original history.
 
-Example:
+Design example:
 
 [`examples/recovery-companion-start-again.md`](../examples/recovery-companion-start-again.md)
 
-Status: `EXAMPLE_COMPLETE / NOT_IMPLEMENTED`
+Implementation:
+
+`RecoveryStep` can independently mark a checkpoint as replayable, and the recovery module can determine whether restart is allowed.
+
+Replayability is intentionally separate from live takeover safety.
+
+Status: `PRIMITIVE_IMPLEMENTED / INTERFACE_NOT_IMPLEMENTED`
 
 ---
 
@@ -105,23 +123,45 @@ Manual recovery already has two experimental artifacts:
 
 These document the current manual fallback.
 
-They do not yet implement the Recovery Companion interface.
+## Current Code
 
-## Current Prototype State
+The first implementation lives in:
 
-The four intended behaviours are now concrete enough to inspect:
+`src/aison/recovery.py`
 
-- See what happened
-- Show me how
-- Take over from here
-- Start again from here
+Current tested primitives include:
 
-The next phase is implementation.
+- workflow step status,
+- human-readable progress formatting,
+- optional manual instructions,
+- safe takeover checkpoints,
+- replayable checkpoints.
 
-The examples should not be treated as evidence that the interface works.
+Tests live in:
+
+`tests/test_recovery_step.py`
+
+The repository test workflow currently passes with these primitives.
+
+## What Is Still Missing
+
+The current code does **not** yet provide:
+
+- a live Recovery Companion interface,
+- an automated GitHub agent,
+- real pause or takeover control,
+- real checkpoint restoration,
+- safe replay of external actions,
+- persistent workflow history.
+
+The current implementation is only the smallest code layer needed to explore those behaviours.
 
 ## Prototype Rule
 
 Build one workflow first.
 
 Do not generalise the design until the GitHub publishing prototype exposes what actually works, what is annoying, and what is missing.
+
+Examples are not validation.
+
+Passing tests show that the current code behaves as specified; they do not prove that the overall Recovery Companion concept works in real use.
