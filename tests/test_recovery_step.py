@@ -6,6 +6,7 @@ from aison.recovery import (
     can_take_over,
     current_step,
     format_recovery_steps,
+    latest_restart_checkpoint,
     latest_takeover_checkpoint,
     show_manual_instruction,
 )
@@ -224,3 +225,90 @@ def test_latest_takeover_checkpoint_returns_none_when_no_safe_step_is_reached():
     )
 
     assert latest_takeover_checkpoint(session) is None
+
+
+def test_latest_restart_checkpoint_returns_most_recent_reached_replayable_step():
+    session = RecoverySession(
+        capability="github_publish_aison",
+        steps=(
+            RecoveryStep(
+                name="Open repository",
+                status=StepStatus.COMPLETED,
+                replayable_checkpoint=True,
+            ),
+            RecoveryStep(
+                name="Edit file",
+                status=StepStatus.COMPLETED,
+                replayable_checkpoint=False,
+            ),
+            RecoveryStep(
+                name="Review change",
+                status=StepStatus.IN_PROGRESS,
+                replayable_checkpoint=True,
+            ),
+            RecoveryStep(
+                name="Commit change",
+                status=StepStatus.PENDING,
+                replayable_checkpoint=True,
+            ),
+        ),
+    )
+
+    step = latest_restart_checkpoint(session)
+
+    assert step is not None
+    assert step.name == "Review change"
+
+
+def test_latest_restart_checkpoint_returns_none_when_no_replayable_step_is_reached():
+    session = RecoverySession(
+        capability="github_publish_aison",
+        steps=(
+            RecoveryStep(
+                name="Open repository",
+                status=StepStatus.COMPLETED,
+                replayable_checkpoint=False,
+            ),
+            RecoveryStep(
+                name="Commit change",
+                status=StepStatus.PENDING,
+                replayable_checkpoint=True,
+            ),
+        ),
+    )
+
+    assert latest_restart_checkpoint(session) is None
+
+
+def test_takeover_and_restart_checkpoints_can_differ():
+    session = RecoverySession(
+        capability="github_publish_aison",
+        steps=(
+            RecoveryStep(
+                name="Open repository",
+                status=StepStatus.COMPLETED,
+                safe_checkpoint=True,
+                replayable_checkpoint=True,
+            ),
+            RecoveryStep(
+                name="Review change",
+                status=StepStatus.COMPLETED,
+                safe_checkpoint=False,
+                replayable_checkpoint=True,
+            ),
+            RecoveryStep(
+                name="Commit change",
+                status=StepStatus.IN_PROGRESS,
+                safe_checkpoint=True,
+                replayable_checkpoint=False,
+            ),
+        ),
+    )
+
+    takeover_step = latest_takeover_checkpoint(session)
+    restart_step = latest_restart_checkpoint(session)
+
+    assert takeover_step is not None
+    assert restart_step is not None
+    assert takeover_step.name == "Commit change"
+    assert restart_step.name == "Review change"
