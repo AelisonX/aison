@@ -69,4 +69,25 @@ This note does not claim:
 - a new mechanism, AISØN doctrine, or terminology;
 - empirical validation or a general explanation of black-box policies.
 
+## Boundary: stopping does not imply resolution
+
+Fast inference ≠ fast commitment.
+
+But delayed commitment ≠ better decision.
+
+Stopping deliberation does not imply that uncertainty has been resolved.
+
+A valid terminal state may preserve unresolved uncertainty while ending further analysis:
+
+```text
+DECISION: PARK
+UNCERTAINTY: UNRESOLVED
+REASON: no materially new decision-relevant information
+```
+
+This is a workflow boundary, not a new research claim.
+
+Preserving dissent does not require preserving deliberation forever.
+The broader multi-agent “Wudang Dance” idea was dropped as a research direction after red-team review because, once payoff and information structure are specified, its candidate mechanisms were judged in red-team review to fall within established work in optimal stopping, signalling, best-response dynamics, coordination, and protocol design.
+
 Status remains PARKED / INTERNAL. No experiment, new Phase, or publication is authorized by this note.
