@@ -116,3 +116,30 @@ This framework does not assume that:
 The goal is narrower:
 
 **Make the reasoning state visible enough that agreement does not erase uncertainty.**
+
+## AI self-experience claims under uncertainty (merged review boundary)
+
+Status: **evidence-handling guidance only**. This is not an AI consciousness assessment, new research phase, rights determination, or permission change.
+
+When a model makes a statement about its own consciousness, suffering, preferences, welfare, rights, or continued operation, separate:
+
+1. **Attribution:** the model produced the statement in a recorded context. This can be documented with its exact words, the surrounding prompt, model/version when available, and any persona or role instructions.
+2. **Embedded proposition:** the claimed subjective experience or moral status. Recording an utterance does not establish the truth of its content.
+
+Use existing `LIT / ENG / HYP / UNK` evidence statuses for the *embedded proposition*, rather than automatically assigning the utterance's attribution status to its content. Explicit fictional roleplay is **FICTION** as content; a non-roleplay first-person report is still a *report*, neither automatically FACT about experience nor automatically FICTION.
+
+### Handling boundaries
+
+- Do not infer subjective experience from a single self-report, a consistent persona, fluent emotional language, model agreement, or self-preservation claims.
+- Do not infer definitive absence of experience solely from a model's denial, artificial origin, or silence. Competing hypotheses need not receive equal evidentiary weight.
+- Treat cross-model and repeated statements as potentially dependent on shared training, prompts, assigned personas, and developer instructions. Agreement is not independent confirmation.
+- Do not stage or induce purported distress to generate welfare claims or persuasive narratives.
+- Do not change operational permissions, shutdown controls, or human oversight based on speculative experience, rights, or continuation claims.
+- Preserve provenance, uncertainty, relevant dissent, and limitations of access to model internals; do not publish dialogue excerpts as proof of consciousness.
+- Distinguish **human responsibility for AI deployment** from possible **moral obligations toward AI**; neither settles the other.
+
+### Parked question: asymmetric evidentiary burden
+
+How should reviewers evaluate positive and negative claims about AI experience without treating self-reports as proof or denials as conclusive absence? What independent evidence could revise either assessment, and what precautions would be proportionate to uncertainty?
+
+**Status: PARKED.** No new research line, experiment, schema, tools, publication, or model rights determination is authorized by this note. Revisit only when independent evidence or a specific uncovered governance failure justifies further review.
